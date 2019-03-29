@@ -2,11 +2,14 @@ import numpy as np
 import cv2
 from time import sleep
 import RPi.GPIO as GPIO
+import os
 
 GPIO.setmode(GPIO.BCM)
 
-global tiltServoAngle = 90
-global panServoAngle = 100
+global tiltServoAngle 
+tiltServoAngle = 90
+global panServoAngle
+panServoAngle = 100
 
 panPin = 14
 tiltPin = 15
@@ -18,7 +21,7 @@ cap = cv2.VideoCapture(0)
 
 capWidth = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 capHeight = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-
+'''
 def track(servo, angle):
 	pwm = GPIO.PWM(servo, 50)
 	pwm.start(8)
@@ -26,38 +29,45 @@ def track(servo, angle):
 	pwm.ChangeDutyCycle(dc)
 	sleep(0.3)
 	pwm.stop()
-
+'''
 #intialize camera position
 
-track(panPin, tiltServoAngle)
-track(tiltPin, panServoAngle)
+os.system("python3 track.py " + str(panPin) + " " + str(panServoAngle))
+os.system("python3 track.py " + str(tiltPin) + " " + str(tiltServoAngle))
+
+#track(panPin, tiltServoAngle)
+#track(tiltPin, panServoAngle)
 
 def updateServoPosition(x, y):
 	global panServoAngle
 	global tiltServoAngle
-	if (x < ):
+	if (x < 250):
 		panServoAngle += 10
 		if panServoAngle > 140:
 			panServoAngle = 140
-  		track(panPin, panServoAngle)
+		os.system("python3 track.py " + str(panPin) + " " + str(panServoAngle))
+
 	
-	if (x > ):
+	if (x > 300):
 		panServoAngle -= 10
 		if panServoAngle < 40:
 			panServoAngle = 40
-        	track(panPin, panServoAngle)
+		os.system("python3 track.py " + str(panPin) + " " + str(panServoAngle))
 
-	if (y < ):
+
+	if (y < 160):
 		tiltServoAngle += 10
 		if tiltServoAngle > 140:
 			tiltServoAngle = 140
-        	track(tiltPin, tiltServoAngle)
+		os.system("python3 track.py " + str(tiltPin) + " " + str(tiltServoAngle))
+
 		 
-	if (y > ):
+	if (y > 210):
         	tiltServoAngle -= 10
 		if tiltServoAngle < 40:
 			tiltServoAngle = 40
-		track(tiltPin, tiltServoAngle)
+			os.system("python3 track.py " + str(tiltPin) + " " + str(tiltServoAngle))
+
       	
 
 while(True):

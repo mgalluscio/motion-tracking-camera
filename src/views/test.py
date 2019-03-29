@@ -5,12 +5,19 @@ import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 
+global tiltServoAngle = 90
+global panServoAngle = 100
+
 panPin = 14
 tiltPin = 15
 
 faceFront = cv2.CascadeClassifier('../dependencies/data/haarcascade_frontalface_alt2.xml')
 faceProfile = cv2.CascadeClassifier('../dependencies/data/haarcascade_profileface.xml')
+
 cap = cv2.VideoCapture(0)
+
+capWidth = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+capHeight = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
 def track(servo, angle):
 	pwm = GPIO.PWM(servo, 50)
@@ -22,8 +29,36 @@ def track(servo, angle):
 
 #intialize camera position
 
-track(panPin, 90)
-track(tiltPin, 100)
+track(panPin, tiltServoAngle)
+track(tiltPin, panServoAngle)
+
+def updateServoPosition(x, y):
+	global panServoAngle
+	global tiltServoAngle
+	if (x < ):
+		panServoAngle += 10
+		if panServoAngle > 140:
+			panServoAngle = 140
+  		track(panPin, panServoAngle)
+	
+	if (x > ):
+		panServoAngle -= 10
+		if panServoAngle < 40:
+			panServoAngle = 40
+        	track(panPin, panServoAngle)
+
+	if (y < ):
+		tiltServoAngle += 10
+		if tiltServoAngle > 140:
+			tiltServoAngle = 140
+        	track(tiltPin, tiltServoAngle)
+		 
+	if (y > ):
+        	tiltServoAngle -= 10
+		if tiltServoAngle < 40:
+			tiltServoAngle = 40
+		track(tiltPin, tiltServoAngle)
+      	
 
 while(True):
     # Capture frame-by-frame
@@ -34,6 +69,7 @@ while(True):
 
     for (x,y,w,h) in face:
         print("front", x,y,w,h)
+	updateServoPosition(int((x+w)/2), int((y+h)/2))
         roi_gray = gray[y:y+h, x:x+w]
         roi_color = frame[y:y+h, x:x+w]
 
